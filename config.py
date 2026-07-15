@@ -1,22 +1,16 @@
-# =====================================================
 # CONFIGURACIÓN DEL MODELO
-# =====================================================
 
 MODELO_PRINCIPAL = "gemini-2.5-flash"
-MODELO_ALTERNATIVO = "gemini-2.5-pro"
+MODELO_ALTERNATIVO = "gemini-2.5-flash-lite"
 
-# =====================================================
 # PARÁMETROS DE GENERACIÓN
-# =====================================================
 
 TEMPERATURE = 0.2
 
 MAX_OUTPUT_TOKENS_CHAT = 600
 MAX_OUTPUT_TOKENS_CHECKLIST = 1000
 
-# =====================================================
 # LÍMITES DEL ASISTENTE
-# =====================================================
 
 MAX_HISTORY_TURNS = 4
 
