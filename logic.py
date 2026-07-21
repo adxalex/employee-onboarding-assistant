@@ -62,7 +62,7 @@ def responder_chat(
         empleado=estado.empleado,
         dia=estado.dia,
         pregunta=pregunta,
-        documentos=resultado_contexto["docs"],
+        docs=resultado_contexto["docs"],
         faqs=resultado_contexto["faqs"],
         historial=historial,
     )
@@ -106,7 +106,7 @@ def generar_checklist(
     prompt = construir_prompt_checklist(
         empleado=estado.empleado,
         dia=estado.dia,
-        documentos=resultado["docs"],
+        docs=resultado["docs"],
         fragmento_dia=resultado["fragmento_dia"],
     )
 
