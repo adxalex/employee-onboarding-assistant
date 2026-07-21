@@ -1,0 +1,13 @@
+# Employee Onboarding Assistant — dependencias del proyecto
+# Instalar con:  pip install -r requirements.txt
+#
+# Solo se listan paquetes de TERCEROS. El resto de imports del proyecto
+# (json, os, csv, pathlib, datetime, dataclasses...) son de la libreria
+# estandar de Python y no se instalan.
+
+# --- Proveedores de LLM ---
+google-genai        # cliente de Gemini: gemini_client.py, bench_llm.py, list_modelos.py
+openai              # SDK compatible OpenAI, usado para DeepSeek en bench_llm.py
+
+# --- Configuracion / secretos ---
+python-dotenv       # carga las API keys desde .env: gemini_auth.py, bench_llm.py, benchmark.py

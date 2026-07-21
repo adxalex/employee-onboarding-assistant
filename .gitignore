@@ -1,0 +1,17 @@
+# Secretos
+.env
+.env.local
+
+# Entorno virtual
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Output: ignora temporales pero conserva los entregables (CSV/JSON del benchmark)
+output/*
+!output/.gitkeep
+!output/*.csv
+!output/*.json
