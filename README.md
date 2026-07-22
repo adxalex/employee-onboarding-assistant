@@ -66,81 +66,68 @@ python evaluar.py    # Parte 4 — genera entregables/matriz_decision.md
 Diagrama generado a partir de los `import` reales de cada módulo.
 
 ```mermaid
-flowchart TD
-    CONFIG["config.py<br/>modelos · temperatura · límites"]
+flowchart TB
+    DATA[("data/*.json")]
+    CFG["config.py"]
+    DS[("dataset_benchmark.json")]
 
-    subgraph DATOS["data/ — datos del reto"]
-        D1[("onboarding_docs.json<br/>faq_onboarding.json<br/>empleados_demo.json<br/>convenio.json")]
-        D2[("dataset_benchmark.json")]
+    subgraph ASIS["ASISTENTE — responde al empleado"]
+        direction TB
+        CTX["context.py"]
+        ST["state.py"]
+        PR["prompts.py"]
+        CL["gemini_client.py"]
+        LO["logic.py"]
+        VAL["validators.py"]
+        MA["main.py"]
     end
 
-    subgraph P1["Parte 1 · David — Contexto y datos"]
-        CONTEXT["context.py<br/>seleccionar_contexto<br/>seleccionar_docs_checklist"]
-        STATE["state.py<br/>crear_estado · historial ≤4"]
+    subgraph BENCH["BENCHMARK — Parte 4"]
+        direction TB
+        BL["bench_llm.py"]
+        BE["benchmark.py"]
+        EV["evaluar.py"]
     end
 
-    subgraph P2["Parte 2 · Mihaela — Asistente modular"]
-        PROMPTS["prompts.py<br/>construir_prompt_chat<br/>construir_prompt_checklist"]
-        AUTH["gemini_auth.py<br/>carga API key"]
-        CLIENT["gemini_client.py<br/>llamada a Gemini"]
-        LOGIC["logic.py<br/>responder_chat<br/>generar_checklist"]
-        MAIN["main.py<br/>demos 1-5"]
-    end
+    OUT[("output/ + matriz")]
 
-    subgraph P3["Parte 3 · Jose — Robustez"]
-        VAL["validators.py<br/>validar_entrada"]
-    end
+    %% Flujo principal del asistente (linea solida = camino directo)
+    DATA --> CTX
+    CTX --> ST
+    CTX --> PR
+    ST --> LO
+    PR --> LO
+    CL --> LO
+    LO --> MA
+    VAL --> MA
 
-    subgraph P4["Parte 4 · Adixon — Benchmark"]
-        BLLM["bench_llm.py<br/>Gemini + DeepSeek"]
-        BENCH["benchmark.py<br/>runner del benchmark"]
-        EVAL["evaluar.py<br/>chequeos + matriz"]
-        LIST["list_modelos.py<br/>utilidad"]
-    end
+    %% config es transversal (punteado)
+    CFG -.-> CL
+    CFG -.-> VAL
 
-    OUT[("output/<br/>benchmark_*.csv + .json")]
-    MATRIZ[("entregables/<br/>matriz_decision.md")]
+    %% Flujo del benchmark (linea solida)
+    DS --> BE
+    BL --> BE
+    BE --> EV
+    EV --> OUT
 
-    D1 --> CONTEXT
-    CONTEXT --> STATE
-    CONFIG --> CLIENT
-    AUTH --> CLIENT
-    CONFIG --> VAL
-    CONTEXT --> VAL
+    %% El benchmark REUTILIZA modulos del asistente (punteado)
+    CTX -. reutiliza .-> BE
+    PR -. reutiliza .-> BE
+    ST -. reutiliza .-> BE
 
-    CONTEXT --> LOGIC
-    STATE --> LOGIC
-    PROMPTS --> LOGIC
-    CLIENT --> LOGIC
+    classDef asis fill:#1f4e79,stroke:#0d2b45,color:#fff
+    classDef bench fill:#5c2d82,stroke:#33174a,color:#fff
+    classDef ext fill:#2f2f2f,stroke:#111,color:#eee
 
-    LOGIC --> MAIN
-    STATE --> MAIN
-    VAL --> MAIN
-
-    D2 --> BENCH
-    CONTEXT --> BENCH
-    STATE --> BENCH
-    PROMPTS --> BENCH
-    BLLM --> BENCH
-    BENCH --> OUT
-    OUT --> EVAL
-    D2 --> EVAL
-    EVAL --> MATRIZ
-
-    classDef p1 fill:#1f6f4a,stroke:#0d3b28,color:#fff
-    classDef p2 fill:#1f4e79,stroke:#0d2b45,color:#fff
-    classDef p3 fill:#7a3b1f,stroke:#452110,color:#fff
-    classDef p4 fill:#5c2d82,stroke:#33174a,color:#fff
-    classDef shared fill:#4a4a4a,stroke:#222,color:#fff
-    classDef file fill:#2f2f2f,stroke:#111,color:#ddd
-
-    class CONTEXT,STATE p1
-    class PROMPTS,AUTH,CLIENT,LOGIC,MAIN p2
-    class VAL p3
-    class BLLM,BENCH,EVAL,LIST p4
-    class CONFIG shared
-    class D1,D2,OUT,MATRIZ file
+    class CTX,ST,PR,CL,LO,VAL,MA asis
+    class BL,BE,EV bench
+    class DATA,CFG,DS,OUT ext
 ```
+
+> **Cómo leerlo:** las líneas **sólidas** son el camino principal de cada bloque;
+> las **punteadas** son conexiones transversales (`config` global y los módulos que
+> el benchmark **reutiliza** del asistente).
 
 **Nota de diseño:** `benchmark.py` **no pasa por `logic.py`**. Orquesta directamente
 `context` → `prompts` → `bench_llm`, porque cada caso del benchmark debe ser
