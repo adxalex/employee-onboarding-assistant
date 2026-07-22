@@ -1,6 +1,6 @@
 # CONFIGURACIÓN DEL MODELO
 
-MODELO_PRINCIPAL = "gemini-2.5-flash"
+MODELO_PRINCIPAL = "gemini-flash-lite-latest"
 MODELO_ALTERNATIVO = "gemini-2.5-flash-lite"
 
 # PARÁMETROS DE GENERACIÓN
